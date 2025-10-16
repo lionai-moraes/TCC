@@ -10,6 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Autopeças — Estoque</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   </head>
   <body class="bg-light">
     <style>
@@ -23,12 +24,206 @@
       .badge-soft-danger { background: #fee2e2; color:#b91c1c; }
       .btn-soft { background: rgba(255,255,255,.15); color:#fff; border:0; }
       .btn-soft:hover { background: rgba(255,255,255,.25); color:#fff; }
+      
+      /* Mobile Responsive Styles */
+      @media (max-width: 767.98px) {
+        .app-sidebar {
+          position: fixed;
+          top: 0;
+          left: -230px;
+          z-index: 1050;
+          transition: left 0.3s ease;
+          width: 230px;
+          display: block !important;
+          background: #0f172a;
+          min-height: 100vh;
+        }
+        .app-sidebar.show {
+          left: 0;
+        }
+        .app-sidebar .nav-link {
+          color: #cbd5e1;
+          padding: 0.75rem 1rem;
+          display: block;
+        }
+        .app-sidebar .nav-link.active, 
+        .app-sidebar .nav-link:hover {
+          color: #fff;
+          background: rgba(255,255,255,.06);
+        }
+        .mobile-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0,0,0,0.5);
+          z-index: 1040;
+          display: none;
+        }
+        .mobile-overlay.show {
+          display: block;
+        }
+        .mobile-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 1rem;
+          background: #0f172a;
+          color: white;
+          position: sticky;
+          top: 0;
+          z-index: 1030;
+        }
+        .mobile-menu-btn {
+          background: none;
+          border: none;
+          color: white;
+          font-size: 1.5rem;
+          padding: 0.5rem;
+        }
+        .mobile-actions {
+          display: flex;
+          gap: 0.5rem;
+          flex-wrap: wrap;
+        }
+        .mobile-actions .btn {
+          font-size: 0.8rem;
+          padding: 0.4rem 0.8rem;
+        }
+        .main-content {
+          padding: 0;
+        }
+        .panel-bar {
+          border-radius: 0;
+          margin: 0;
+        }
+        .panel-bar .d-flex {
+          flex-direction: column;
+          gap: 1rem;
+        }
+        .panel-bar .title {
+          text-align: center;
+        }
+        .table-responsive {
+          font-size: 0.85rem;
+        }
+        .btn-group-sm .btn {
+          padding: 0.25rem 0.5rem;
+          font-size: 0.75rem;
+        }
+        
+        /* Mobile Card Layout for Table */
+        @media (max-width: 767.98px) {
+          .table-responsive {
+            overflow: visible;
+            border: none;
+          }
+          .table-responsive table {
+            width: 100%;
+            border: none;
+          }
+          .table-responsive thead {
+            display: none;
+          }
+          .table-responsive tbody {
+            display: block;
+          }
+          .table-responsive tr {
+            display: block;
+            border: 1px solid #dee2e6;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            width: 100%;
+          }
+          .table-responsive td {
+            display: block;
+            border: none;
+            padding: 0.5rem;
+            text-align: left;
+            width: 100%;
+            border-bottom: 1px solid #f1f3f4;
+            position: relative;
+            padding-left: 32%;
+          }
+          .table-responsive td:before {
+            content: attr(data-label) ": ";
+            position: absolute;
+            left: 0;
+            width: 30%;
+            font-weight: 600;
+            color: #6c757d;
+            font-size: 0.85rem;
+          }
+          .table-responsive td.text-end {
+            text-align: left !important;
+          }
+          .table-responsive td:last-child {
+            text-align: left;
+            padding-left: 32%;
+            border-top: 1px solid #dee2e6;
+            margin-top: 0.5rem;
+            padding-top: 1rem;
+          }
+          .table-responsive td:last-child:before {
+            content: attr(data-label) ": ";
+            position: absolute;
+            left: 0;
+            width: 30%;
+            font-weight: 600;
+            color: #6c757d;
+            font-size: 0.85rem;
+          }
+        }
+        .form-control, .form-select {
+          font-size: 0.9rem;
+        }
+        .modal-dialog {
+          margin: 0.5rem;
+        }
+        .modal-lg {
+          max-width: calc(100% - 1rem);
+        }
+      }
+      
+      @media (min-width: 768px) {
+        .mobile-header {
+          display: none;
+        }
+        .mobile-overlay {
+          display: none;
+        }
+      }
     </style>
 
+    <!-- Mobile Overlay -->
+    <div class="mobile-overlay" id="mobile-overlay"></div>
+    
     <div class="container-fluid app-shell p-0">
+      <!-- Mobile Header -->
+      <div class="mobile-header d-md-none">
+        <button class="mobile-menu-btn" id="mobile-menu-btn">
+          <i class="bi bi-list"></i>
+        </button>
+        <div class="mobile-actions">
+          <a href="../index.html" class="btn btn-soft btn-sm" title="Voltar à página inicial">
+            <i class="bi bi-house"></i>
+          </a>
+          <button class="btn btn-soft btn-sm" onclick="exportCSV()">
+            <i class="bi bi-file-earmark-excel"></i>
+          </button>
+          <button class="btn btn-soft btn-sm" onclick="exportPDF()">
+            <i class="bi bi-file-earmark-pdf"></i>
+          </button>
+        </div>
+      </div>
+      
       <div class="d-flex">
         <!-- Sidebar -->
-        <aside class="app-sidebar d-none d-md-block py-3">
+        <aside class="app-sidebar d-md-block py-3" id="sidebar">
           <div class="px-3 mb-3 text-white-50 small" id="user-name"><?php echo htmlspecialchars($usuario); ?></div>
           <nav class="nav flex-column px-2" id="side-menu">
             <a class="nav-link active rounded" data-target="#produtos" href="#">Produtos</a>
@@ -38,10 +233,16 @@
         </aside>
 
         <!-- Main -->
-        <main class="flex-fill p-3 p-md-4">
+        <main class="flex-fill p-3 p-md-4 main-content">
           <div class="panel-bar d-flex align-items-center justify-content-between p-3 px-4 mb-3 shadow-sm">
             <div class="title">Painel de Estoque</div>
-            <div class="d-flex gap-2">
+            <div class="d-flex gap-2 d-none d-md-flex">
+              <a href="../index.html" class="btn btn-soft btn-sm" title="Voltar à página inicial">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16" class="me-1">
+                  <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+                </svg>
+                Voltar ao Início
+              </a>
               <button class="btn btn-soft btn-sm" onclick="exportCSV()">Excel</button>
               <button class="btn btn-soft btn-sm" onclick="exportPDF()">PDF</button>
             </div>
@@ -111,7 +312,7 @@
             <div class="table-responsive">
               <table class="table table-sm align-middle">
                 <thead class="table-light">
-                  <tr><th>SKU</th><th>Produto</th><th class="text-end">Estoque</th><th class="text-end">Mín.</th></tr>
+                  <tr><th>SKU</th><th>Produto</th><th class="text-end">Estoque</th><th class="text-end">Mín</th></tr>
                 </thead>
                 <tbody id="tbody-alertas"></tbody>
               </table>
@@ -150,12 +351,36 @@
                   <input id="prod-category" class="form-control">
                 </div>
                 <div class="col-md-4">
+                  <label class="form-label">Unidade</label>
+                  <input id="prod-unit" class="form-control" placeholder="ex.: UN, PC, CX">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Custo de compra</label>
+                  <input type="number" step="0.01" id="prod-custo-compra" class="form-control" value="0">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">N° da prateleira</label>
+                  <input id="prod-numero-prateleira" class="form-control">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Última compra</label>
+                  <input type="date" id="prod-last-purchase" class="form-control">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Última venda</label>
+                  <input type="date" id="prod-last-sale" class="form-control">
+                </div>
+                <div class="col-md-4">
                   <label class="form-label">Preço</label>
                   <input type="number" step="0.01" id="prod-price" class="form-control" required>
                 </div>
                 <div class="col-md-4">
                   <label class="form-label">Qtd. mínima</label>
                   <input type="number" id="prod-min" class="form-control" value="0">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Quantidade atual</label>
+                  <input type="number" id="prod-initial-qty" class="form-control" value="0" min="0">
                 </div>
               </div>
             </div>
@@ -187,13 +412,13 @@
         produtosCache.forEach(p => {
           const tr = document.createElement('tr');
           tr.innerHTML = `
-            <td>${p.sku}</td>
-            <td>${p.name}</td>
-            <td>${p.category ?? ''}</td>
-            <td class="text-end">R$ ${money(p.price)}</td>
-            <td class="text-end">${p.min_qty ?? 0}</td>
-            <td class="text-end ${(+p.stock_qty <= +p.min_qty)?'text-danger fw-semibold':''}">${p.stock_qty ?? 0}</td>
-            <td>
+            <td data-label="SKU">${p.sku}</td>
+            <td data-label="Nome">${p.name}</td>
+            <td data-label="Categoria">${p.category ?? ''}</td>
+            <td class="text-end" data-label="Preço">R$ ${money(p.price)}</td>
+            <td class="text-end" data-label="Mín.">${p.min_qty ?? 0}</td>
+            <td class="text-end ${(+p.stock_qty <= +p.min_qty)?'text-danger fw-semibold':''}" data-label="Estoque">${p.stock_qty ?? 0}</td>
+            <td data-label="Ações">
               <div class="btn-group btn-group-sm">
                 <button class="btn btn-outline-primary" onclick='editarProduto(${JSON.stringify(p)})'>Editar</button>
                 <button class="btn btn-outline-danger" onclick='removerProduto(${p.id})'>Excluir</button>
@@ -214,9 +439,9 @@
         data.forEach(p => {
           const abaixo = (+p.stock_qty) <= (+p.min_qty);
           const tr = document.createElement('tr');
-          tr.innerHTML = `<td>${p.sku}</td><td>${p.name}</td>
-            <td class="text-end ${abaixo ? 'text-danger fw-semibold' : ''}">${p.stock_qty ?? 0}</td>
-            <td class="text-end">${p.min_qty ?? 0}</td>`;
+          tr.innerHTML = `<td data-label="SKU">${p.sku}</td><td data-label="Produto">${p.name}</td>
+            <td class="text-end ${abaixo ? 'text-danger fw-semibold' : ''}" data-label="Estoque">${p.stock_qty ?? 0}</td>
+            <td class="text-end" data-label="Mín.">${p.min_qty ?? 0}</td>`;
           body.appendChild(tr);
         });
       }
@@ -226,8 +451,14 @@
         document.getElementById('prod-sku').value = '';
         document.getElementById('prod-name').value = '';
         document.getElementById('prod-category').value = '';
+        document.getElementById('prod-unit').value = '';
+        document.getElementById('prod-custo-compra').value = '0';
+        document.getElementById('prod-numero-prateleira').value = '';
+        document.getElementById('prod-last-purchase').value = '';
+        document.getElementById('prod-last-sale').value = '';
         document.getElementById('prod-price').value = '0';
         document.getElementById('prod-min').value = '0';
+        document.getElementById('prod-initial-qty').value = '0';
       }
 
       function editarProduto(p){
@@ -236,8 +467,14 @@
         document.getElementById('prod-sku').value = p.sku;
         document.getElementById('prod-name').value = p.name;
         document.getElementById('prod-category').value = p.category ?? '';
+        document.getElementById('prod-unit').value = p.unit ?? '';
+        document.getElementById('prod-custo-compra').value = p.custo_compra ?? 0;
+        document.getElementById('prod-numero-prateleira').value = p.numero_prateleira ?? '';
+        document.getElementById('prod-last-purchase').value = (p.last_purchase_at ?? '').slice(0,10);
+        document.getElementById('prod-last-sale').value = (p.last_sale_at ?? '').slice(0,10);
         document.getElementById('prod-price').value = p.price;
         document.getElementById('prod-min').value = p.min_qty ?? 0;
+        document.getElementById('prod-initial-qty').value = '0';
         modal.show();
       }
 
@@ -249,8 +486,14 @@
         fd.append('sku', document.getElementById('prod-sku').value);
         fd.append('name', document.getElementById('prod-name').value);
         fd.append('category', document.getElementById('prod-category').value);
+        fd.append('unit', document.getElementById('prod-unit').value);
+        fd.append('last_purchase_at', document.getElementById('prod-last-purchase').value);
+        fd.append('last_sale_at', document.getElementById('prod-last-sale').value);
+        fd.append('custo_compra', document.getElementById('prod-custo-compra').value);
+        fd.append('numero_prateleira', document.getElementById('prod-numero-prateleira').value);
         fd.append('price', document.getElementById('prod-price').value);
         fd.append('min_qty', document.getElementById('prod-min').value);
+        fd.append('initial_qty', document.getElementById('prod-initial-qty').value);
         const res = await fetch(`${apiBase}/products_create.php`, {method:'POST', body: fd});
         const data = await res.json();
         if (data.error) { alert(data.error); return; }
@@ -350,6 +593,41 @@
           alert('Não foi possível gerar o PDF. Tente novamente e confira sua internet.');
         }
       }
+
+      // Mobile menu functionality
+      const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+      const sidebar = document.getElementById('sidebar');
+      const mobileOverlay = document.getElementById('mobile-overlay');
+      
+      function toggleMobileMenu() {
+        sidebar.classList.toggle('show');
+        mobileOverlay.classList.toggle('show');
+        document.body.style.overflow = sidebar.classList.contains('show') ? 'hidden' : '';
+      }
+      
+      function closeMobileMenu() {
+        sidebar.classList.remove('show');
+        mobileOverlay.classList.remove('show');
+        document.body.style.overflow = '';
+      }
+      
+      mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+      mobileOverlay.addEventListener('click', closeMobileMenu);
+      
+      // Close mobile menu when clicking on nav links
+      document.getElementById('side-menu').addEventListener('click', function(e) {
+        const link = e.target.closest('a[data-target]');
+        if (link && window.innerWidth < 768) {
+          closeMobileMenu();
+        }
+      });
+      
+      // Handle window resize
+      window.addEventListener('resize', function() {
+        if (window.innerWidth >= 768) {
+          closeMobileMenu();
+        }
+      });
 
       // Sidebar navigation controlling visible section and title
       document.getElementById('side-menu').addEventListener('click', function(e){

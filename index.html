@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Autopeças — Sistema de Estoque</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0ea5e9;
+      --primary-dark: #0284c7;
+      --secondary: #16a34a;
+      --dark: #0f172a;
+      --light: #f8fafc;
+      --muted: #64748b;
+    }
+    
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+    }
+    
+    .hero-section {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: 100px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+      opacity: 0.3;
+    }
+    
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+    
+    .hero-title {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+    }
+    
+    .hero-subtitle {
+      font-size: 1.25rem;
+      margin-bottom: 2rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .btn-hero {
+      background: var(--secondary);
+      border: none;
+      padding: 15px 40px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 50px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(22, 163, 74, 0.3);
+    }
+    
+    .btn-hero:hover {
+      background: #15803d;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(22, 163, 74, 0.4);
+    }
+    
+    .features-section {
+      padding: 80px 0;
+      background: var(--light);
+    }
+    
+    .feature-card {
+      background: white;
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      transition: transform 0.3s ease;
+      height: 100%;
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .feature-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--dark);
+    }
+    
+    .feature-text {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    
+    .about-section {
+      background: white;
+      padding: 80px 0;
+    }
+    
+    .about-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: var(--dark);
+    }
+    
+    .about-text {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+    
+    .contact-info {
+      margin-top: 2rem;
+      padding: 2rem;
+      background: var(--light);
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+    
+    .contact-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: var(--dark);
+    }
+    
+    .contact-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+      color: var(--muted);
+    }
+    
+    .contact-icon {
+      font-size: 1.2rem;
+      margin-right: 1rem;
+      width: 24px;
+      text-align: center;
+    }
+    
+    .contact-link {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border-bottom: 2px solid transparent;
+    }
+    
+    .contact-link:hover {
+      color: var(--primary-dark);
+      border-bottom-color: var(--primary);
+      transform: translateY(-1px);
+    }
+    
+    .about-gallery {
+      padding-left: 2rem;
+    }
+    
+    .gallery-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: var(--dark);
+    }
+    
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    
+    .gallery-item:first-child {
+      grid-column: 1 / -1;
+    }
+    
+    .gallery-img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+    
+    .gallery-img:hover {
+      transform: scale(1.05);
+    }
+    
+    .map-container {
+      margin-top: 2rem;
+    }
+    
+    .map-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--dark);
+    }
+    
+    .map-iframe {
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+    
+    .map-iframe:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .cta-section {
+      background: var(--dark);
+      color: white;
+      padding: 80px 0;
+      text-align: center;
+    }
+    
+    .cta-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    
+    .cta-subtitle {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      opacity: 0.8;
+    }
+    
+    .btn-outline-light {
+      border: 2px solid white;
+      padding: 12px 30px;
+      font-weight: 600;
+      border-radius: 50px;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-outline-light:hover {
+      background: white;
+      color: var(--dark);
+      transform: translateY(-2px);
+    }
+    
+    .navbar-brand {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary) !important;
+    }
+    
+    .navbar-nav .nav-link {
+      font-weight: 500;
+      color: var(--dark) !important;
+      margin: 0 10px;
+    }
+    
+    .navbar-nav .nav-link:hover {
+      color: var(--primary) !important;
+    }
+    
+    .navbar-fixed {
+      position: fixed !important;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1030;
+      transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      transform: translateY(0);
+    }
+    
+    /* Animação de entrada ultra suave para o navbar fixo */
+    .navbar-fixed-enter {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    
+    .navbar-fixed-enter-active {
+      transform: translateY(0);
+      opacity: 1;
+      transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    
+    /* Adicionar padding-top ao body quando navbar está fixo */
+    body.navbar-fixed-active {
+      padding-top: 76px;
+      transition: padding-top 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    
+    .btn-login {
+      background: transparent;
+      border: 2px solid var(--primary);
+      color: var(--primary);
+      padding: 8px 20px;
+      font-weight: 600;
+      border-radius: 25px;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-login:hover {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .btn-register {
+      background: var(--primary);
+      border: none;
+      color: white;
+      padding: 8px 20px;
+      font-weight: 600;
+      border-radius: 25px;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-register:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+    
+    #user-area {
+      transition: all 0.3s ease;
+    }
+    
+    #user-area .btn {
+      font-size: 0.875rem;
+      padding: 6px 12px;
+    }
+    
+    #user-name {
+      color: var(--primary);
+    }
+    
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2.5rem;
+      }
+      
+      .hero-subtitle {
+        font-size: 1.1rem;
+      }
+      
+      .about-title {
+        font-size: 2rem;
+      }
+      
+      .about-gallery {
+        padding-left: 0;
+        margin-top: 2rem;
+      }
+      
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .gallery-item:first-child {
+        grid-column: 1;
+      }
+      
+      .map-iframe {
+        height: 250px;
+      }
+      
+      .cta-title {
+        font-size: 2rem;
+      }
+      
+      #user-area {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start !important;
+      }
+      
+      #user-area span {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" class="me-2">
+          <rect width="32" height="32" rx="8" fill="url(#gradient)"/>
+          <path d="M8 12h16v8H8z" fill="white"/>
+          <path d="M10 14h12v4H10z" fill="#0ea5e9"/>
+          <defs>
+            <linearGradient id="gradient" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#0ea5e9"/>
+              <stop offset="1" stop-color="#0284c7"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        Estoque
+      </a>
+      
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="#features">Recursos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#contact">Sobre</a>
+          </li>
+        </ul>
+        
+        <div class="d-flex gap-2 align-items-center">
+          <!-- Área do usuário logado (inicialmente oculta) -->
+          <div id="user-area" class="d-none d-flex align-items-center gap-3">
+            <span class="text-muted">Olá, <strong id="user-name"></strong></span>
+            <a href="public/index.php" class="btn btn-primary btn-sm">
+              <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16" class="me-1">
+                <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4H2.5z"/>
+              </svg>
+              Ir para seu estoque
+            </a>
+            <a href="#" class="btn btn-outline-secondary btn-sm" onclick="logout()">Sair</a>
+          </div>
+          
+          <!-- Botões de login/cadastro (inicialmente visíveis) -->
+          <div id="auth-buttons" class="d-flex gap-2">
+            <a href="public/login.html" class="btn btn-login">Entrar</a>
+            <a href="public/register.html" class="btn btn-register">Cadastrar</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="row justify-content-center text-center">
+        <div class="col-lg-8">
+          <div class="hero-content">
+            <h1 class="hero-title">
+              Seus produtos e vendas<br>
+              <span class="text-warning">sob seu controle</span>
+            </h1>
+            <p class="hero-subtitle">
+              Gerencie seu estoque com facilidade. Controle vendas, 
+              movimentações e relatórios em tempo real. <strong>Sistema completo</strong> 
+              para seu negócio crescer de forma organizada!
+            </p>
+            <a href="public/register.html" class="btn btn-hero" id="hero-button">
+              <span id="hero-button-text">Começar agora</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section" id="features">
+    <div class="container">
+      <div class="row text-center mb-5">
+        <div class="col-lg-8 mx-auto">
+          <h2 class="display-5 fw-bold mb-3">Tudo que você precisa para gerenciar sua loja</h2>
+          <p class="lead text-muted">
+            Um sistema completo e intuitivo para controle total do seu negócio
+          </p>
+        </div>
+      </div>
+      
+      <div class="row g-4">
+        <div class="col-lg-4 col-md-6">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg width="30" height="30" fill="white" viewBox="0 0 24 24">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+            </div>
+            <h3 class="feature-title">Controle de Estoque</h3>
+            <p class="feature-text">
+              Gerencie produtos, categorias e movimentações com facilidade. 
+              Controle entrada, saída e ajustes de estoque em tempo real.
+            </p>
+          </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg width="30" height="30" fill="white" viewBox="0 0 24 24">
+                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+              </svg>
+            </div>
+            <h3 class="feature-title">Relatórios Detalhados</h3>
+            <p class="feature-text">
+              Visualize relatórios completos de estoque, produtos em falta 
+              e movimentações. Exporte dados em PDF e Excel.
+            </p>
+          </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg width="30" height="30" fill="white" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
+            </div>
+            <h3 class="feature-title">Interface Intuitiva</h3>
+            <p class="feature-text">
+              Design moderno. Fácil de usar. Com navegação simples e funcionalidades organizadas.
+            </p>
+          </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg width="30" height="30" fill="white" viewBox="0 0 24 24">
+                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+              </svg>
+            </div>
+            <h3 class="feature-title">Segurança Total</h3>
+            <p class="feature-text">
+              Seus dados protegidos com criptografia e autenticação segura. 
+              Cada usuário tem acesso apenas aos seus próprios dados.
+            </p>
+          </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg width="30" height="30" fill="white" viewBox="0 0 24 24">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+            </div>
+            <h3 class="feature-title">Gestão Completa</h3>
+            <p class="feature-text">
+              Cadastre produtos com códigos, preços, categorias e muito mais. 
+              Controle total sobre seu inventário de autopeças.
+            </p>
+          </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg width="30" height="30" fill="white" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
+            </div>
+            <h3 class="feature-title">Acesso Rápido</h3>
+            <p class="feature-text">
+              Sistema web responsivo que funciona em qualquer dispositivo. 
+              Acesse seus dados de qualquer lugar, a qualquer momento.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About/Contact Section -->
+  <section class="about-section" id="contact">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="about-content">
+            <h2 class="about-title">Hitória da Fundadora e Criadora do Site: Da Necessidade ao Controle de Estoque</h2>
+            <p class="about-text">
+              Em 1992, quando Ilha Comprida ainda pertencia a Iguape, o Sr. Manoel (“Seu Mané”) decidiu investir no 
+              ramo de peças automotivas, trazendo seu estoque e experiência de Diadema-SP. Assim surgiu a Auto Peças 
+              Nossa Senhora do Amparo — a primeira loja do segmento na região.
+            </p>
+            <p class="about-text">
+              Com o aumento do fluxo de turistas e veículos nas estradas de areia, o Sr. Manoel ampliou o negócio,
+              passando a oferecer uma ampla linha de produtos das marcas VW, Chevrolet (GM), Ford e Fiat.
+            </p>
+            <p class="about-text">
+              Em 1997, com a construção da ponte Prefeito Laércio e a expansão do tráfego, ele adquiriu um terreno e 
+              inaugurou a nova sede da loja na avenida principal da cidade, próxima à marginal Candapuí.
+            </p>
+            <p class="about-text">
+              Hoje, a Auto Peças Nossa Senhora do Amparo é referência no fornecimento de peças para carros, utilitários, 
+              caminhões e ônibus, atendendo linhas leves e pesadas. É revendedora autorizada das baterias Moura e Pioneiro, 
+              oferecendo peças nacionais e importadas, facilidades de pagamento e serviço de entrega.
+            </p>
+            
+            <div class="contact-info">
+              <h3 class="contact-title">Informações de Contato</h3>
+              <div class="contact-item">
+                <i class="contact-icon">📍</i>
+                <span>Avenida Copacabana, 1670 - Monte Carlo, Ilha Comprida-SP CEP 11925-000</span>
+              </div>
+              <div class="contact-item">
+                <i class="contact-icon">📞</i>
+                <a href="https://api.whatsapp.com/send?phone=5513996131106" target="_blank" class="contact-link">
+                  (13) 99613-1106
+                </a>
+              </div>
+              <div class="contact-item">
+                <i class="contact-icon">🕒</i>
+                <span>Segunda a Sexta: 8h às 18h | Sábado: 8h às 12h</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-lg-6">
+          <div class="about-gallery">
+            <h3 class="gallery-title">Nossa Loja</h3>
+            <div class="gallery-grid">
+              <div class="gallery-item">
+                <img src="img/a1 (1).jpg" alt="Interior da loja" class="gallery-img">
+              </div>
+              <div class="gallery-item">
+                <img src="img/a1 (2).jpg" alt="Estoque organizado" class="gallery-img">
+              </div>
+              <div class="gallery-item">
+                <img src="img/a1 (3).jpg" alt="Atendimento especializado" class="gallery-img">
+              </div>
+            </div>
+            
+            <div class="map-container">
+              <h4 class="map-title">Nossa Localização</h4>
+              <iframe 
+                src="https://www.google.com/maps/embed?pb=!3m2!1spt-BR!2sbr!4v1760387361102!5m2!1spt-BR!2sbr!6m8!1m7!1sVI6n4LfUF7RmxC1YoZJoGg!2m2!1d-24.73520794902522!2d-47.55620185467382!3f104.34402753573858!4f2.3554850966678913!5f0.7820865974627469" 
+                width="100%" 
+                height="300" 
+                style="border:0;" 
+                allowfullscreen="" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade"
+                class="map-iframe">
+              </iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+          <h2 class="cta-title">Pronto para organizar seu estoque?</h2>
+          <p class="cta-subtitle">
+            Junte-se a centenas de lojistas que já organizaram seus negócios com nosso sistema
+          </p>
+          <div class="d-flex gap-3 justify-content-center flex-wrap" id="cta-buttons">
+            <a href="public/register.html" class="btn btn-hero" id="cta-main-button">
+              <span id="cta-main-text">Criar conta gratuita</span>
+            </a>
+            <a href="public/login.html" class="btn btn-outline-light" id="cta-secondary-button">
+              Já tenho conta
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-light py-4">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <p class="mb-0">&copy; 2024 Sistema de Estoque Autopeças. Todos os direitos reservados.</p>
+        </div>
+        <div class="col-md-6 text-md-end">
+          <p class="mb-0">Desenvolvido para autopeças</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Verificar status de login ao carregar a página
+    async function checkLoginStatus() {
+      try {
+        const response = await fetch('check_login.php');
+        const data = await response.json();
+        
+        if (data.loggedIn) {
+          // Usuário está logado - mostrar área do usuário
+          document.getElementById('user-area').classList.remove('d-none');
+          document.getElementById('auth-buttons').classList.add('d-none');
+          document.getElementById('user-name').textContent = data.userName;
+          
+          // Atualizar botão hero para usuário logado
+          updateHeroButtonForLoggedUser();
+          
+          // Atualizar seção CTA para usuário logado
+          updateCTASectionForLoggedUser();
+        } else {
+          // Usuário não está logado - mostrar botões de login/cadastro
+          document.getElementById('user-area').classList.add('d-none');
+          document.getElementById('auth-buttons').classList.remove('d-none');
+          
+          // Manter botão hero padrão para usuário não logado
+          updateHeroButtonForGuest();
+          
+          // Manter seção CTA padrão para usuário não logado
+          updateCTASectionForGuest();
+        }
+      } catch (error) {
+        console.error('Erro ao verificar status de login:', error);
+        // Em caso de erro, mostrar botões de login/cadastro
+        document.getElementById('user-area').classList.add('d-none');
+        document.getElementById('auth-buttons').classList.remove('d-none');
+        updateHeroButtonForGuest();
+        updateCTASectionForGuest();
+      }
+    }
+
+    // Atualizar botão hero para usuário logado
+    function updateHeroButtonForLoggedUser() {
+      const heroButton = document.getElementById('hero-button');
+      const heroButtonText = document.getElementById('hero-button-text');
+      
+      heroButton.href = 'public/index.php';
+      heroButtonText.innerHTML = `
+        <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16" class="me-2">
+          <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4H2.5z"/>
+        </svg>
+        Ir para seu estoque
+      `;
+    }
+
+    // Atualizar botão hero para usuário não logado
+    function updateHeroButtonForGuest() {
+      const heroButton = document.getElementById('hero-button');
+      const heroButtonText = document.getElementById('hero-button-text');
+      
+      heroButton.href = 'public/register.html';
+      heroButtonText.textContent = 'Começar agora';
+    }
+
+    // Atualizar seção CTA para usuário logado
+    function updateCTASectionForLoggedUser() {
+      const ctaMainButton = document.getElementById('cta-main-button');
+      const ctaMainText = document.getElementById('cta-main-text');
+      const ctaSecondaryButton = document.getElementById('cta-secondary-button');
+      
+      // Atualizar botão principal
+      ctaMainButton.href = 'public/index.php';
+      ctaMainText.innerHTML = `
+        <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16" class="me-2">
+          <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4H2.5z"/>
+        </svg>
+        Ir para seu estoque
+      `;
+      
+      // Ocultar botão secundário
+      ctaSecondaryButton.style.display = 'none';
+    }
+
+    // Atualizar seção CTA para usuário não logado
+    function updateCTASectionForGuest() {
+      const ctaMainButton = document.getElementById('cta-main-button');
+      const ctaMainText = document.getElementById('cta-main-text');
+      const ctaSecondaryButton = document.getElementById('cta-secondary-button');
+      
+      // Restaurar botão principal
+      ctaMainButton.href = 'public/register.html';
+      ctaMainText.textContent = 'Criar conta gratuita';
+      
+      // Mostrar botão secundário
+      ctaSecondaryButton.style.display = 'inline-block';
+    }
+
+    // Função de logout
+    async function logout() {
+      try {
+        const response = await fetch('auth_logout.php', {
+          method: 'POST',
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/x-www-form-urlencoded',
+          }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          // Atualizar interface imediatamente
+          document.getElementById('user-area').classList.add('d-none');
+          document.getElementById('auth-buttons').classList.remove('d-none');
+          
+          // Restaurar botão hero para usuário não logado
+          updateHeroButtonForGuest();
+          
+          // Restaurar seção CTA para usuário não logado
+          updateCTASectionForGuest();
+          
+          // Mostrar mensagem de sucesso
+          showNotification(data.message, 'success');
+        } else {
+          showNotification('Erro ao fazer logout. Tente novamente.', 'error');
+        }
+        
+      } catch (error) {
+        console.error('Erro ao fazer logout:', error);
+        showNotification('Erro ao fazer logout. Tente novamente.', 'error');
+      }
+    }
+
+    // Função para mostrar notificações
+    function showNotification(message, type = 'info') {
+      // Criar elemento de notificação
+      const notification = document.createElement('div');
+      notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed`;
+      notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+      notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      `;
+      
+      document.body.appendChild(notification);
+      
+      // Remover automaticamente após 3 segundos
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.parentNode.removeChild(notification);
+        }
+      }, 3000);
+    }
+
+    // Smooth scrolling para links internos
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // Navbar fixo e animação ultra suave ao scroll
+    let isNavbarFixed = false;
+    let scrollTimeout;
+    
+    window.addEventListener('scroll', function() {
+      const navbar = document.querySelector('.navbar');
+      const body = document.body;
+      
+      // Debounce mais suave para melhor performance
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        if (window.scrollY > 50 && !isNavbarFixed) {
+          // Adicionar classe fixa com animação ultra suave
+          navbar.classList.add('navbar-fixed-enter');
+          body.classList.add('navbar-fixed-active');
+          
+          // Delay mais longo para transição mais suave
+          setTimeout(() => {
+            navbar.classList.add('navbar-fixed');
+            navbar.classList.add('navbar-fixed-enter-active');
+            navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+            navbar.style.backdropFilter = 'blur(10px)';
+            navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+            isNavbarFixed = true;
+          }, 50);
+          
+        } else if (window.scrollY <= 50 && isNavbarFixed) {
+          // Remover classe fixa com animação ultra suave
+          navbar.classList.remove('navbar-fixed-enter-active');
+          body.classList.remove('navbar-fixed-active');
+          
+          // Delay mais longo para completar a animação
+          setTimeout(() => {
+            navbar.classList.remove('navbar-fixed');
+            navbar.classList.remove('navbar-fixed-enter');
+            navbar.style.background = 'white';
+            navbar.style.backdropFilter = 'none';
+            navbar.style.boxShadow = 'none';
+            isNavbarFixed = false;
+          }, 800);
+        }
+      }, 5);
+    });
+
+    // Verificar login quando a página carregar
+    document.addEventListener('DOMContentLoaded', checkLoginStatus);
+  </script>
+</body>
+</html>

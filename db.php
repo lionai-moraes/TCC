@@ -2,7 +2,7 @@
 function db() {
   static $pdo;
   if ($pdo) return $pdo;
-  $dsn = 'mysql:host=localhost;dbname=estoquepecas;charset=utf8mb4';
+  $dsn = 'mysql:host=localhost;dbname=est_pec;charset=utf8mb4';
   $user = 'root';          // USBWebserver
   $pass = 'usbw';          // senha padrão
   $opts = [

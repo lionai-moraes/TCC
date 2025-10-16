@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Carregando… | Estoque de Autopeças</title>
+  <meta name="color-scheme" content="light only" />
+  <style>
+    :root{
+      --bg:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --brand:#0ea5e9;
+      --brand-strong:#0284c7;
+      --ok:#16a34a;
+      --ring: rgba(2,132,199,.18);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
+    }
+    .wrap{
+      min-height:100%;
+      display:grid;
+      place-items:center;
+      padding:32px 16px;
+    }
+    .card{
+      width:min(540px,92vw);
+      background:#fff;
+      border:1px solid #e2e8f0;
+      border-radius:var(--radius);
+      box-shadow:0 10px 30px rgba(2,6,23,.08), 0 1px 0 rgba(2,6,23,.04);
+      padding:28px;
+    }
+    .head{
+      display:flex; align-items:center; gap:14px; margin-bottom:18px;
+    }
+    .logo{
+      width:44px;height:44px; border-radius:12px;
+      display:grid;place-items:center;
+      background:radial-gradient(120% 120% at 20% 20%, #e0f2fe 0 40%, #f8fafc 40% 100%);
+      border:1px solid #e2e8f0;
+    }
+    .brand{
+      font-weight:700; letter-spacing:.2px;
+    }
+    .sub{
+      color:var(--muted); font-size:.95rem; margin-top:2px;
+    }
+
+    .loader{
+      position:relative;
+      display:grid; justify-items:center; text-align:center;
+      padding:20px 8px 6px;
+    }
+    .gear{
+      width:84px; height:84px;
+      filter: drop-shadow(0 6px 10px rgba(2,132,199,.18));
+      margin-bottom:14px;
+    }
+    .spin{ animation:spin 1.2s linear infinite; transform-origin:50% 50% }
+    @keyframes spin{ to{ transform:rotate(360deg) } }
+
+    .msg{ font-size:1.1rem; font-weight:600; margin:8px 0 6px }
+    .hint{ color:var(--muted); font-size:.95rem }
+
+    .progress{
+      width:100%; height:12px; border-radius:999px;
+      background:#f1f5f9; margin:18px 0 8px; position:relative; overflow:hidden;
+      border:1px solid #e2e8f0;
+    }
+    .bar{
+      height:100%; width:0%;
+      background:linear-gradient(90deg, var(--brand), var(--brand-strong));
+      border-radius:inherit;
+      box-shadow:0 0 0 6px var(--ring) inset;
+      transition:width .25s ease;
+    }
+
+    .success{
+      display:none; margin-top:6px;
+      color:var(--ok); font-weight:700;
+      display:flex; align-items:center; gap:8px; justify-content:center;
+    }
+    .success svg{ width:22px;height:22px }
+
+    .foot{
+      margin-top:18px; display:flex; justify-content:center; gap:14px; flex-wrap:wrap;
+      color:var(--muted); font-size:.9rem;
+    }
+    .link{
+      color:var(--brand-strong); text-decoration:none; font-weight:600;
+    }
+    .link:focus-visible{
+      outline:3px solid var(--ring); border-radius:8px; outline-offset:3px;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .spin{ animation:none }
+      .bar{ transition:none }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap" role="main" aria-busy="true" aria-live="polite">
+    <section class="card" aria-label="Carregando">
+      <header class="head">
+        <div class="logo" aria-hidden="true">
+          <svg class="gear" viewBox="0 0 64 64" aria-hidden="true">
+            <g class="spin">
+              <circle cx="32" cy="32" r="10" fill="#0ea5e9"/>
+              <g fill="#0284c7">
+                <rect x="30" y="6" width="4" height="10" rx="2"/>
+                <rect x="30" y="48" width="4" height="10" rx="2"/>
+                <rect x="6" y="30" width="10" height="4" rx="2"/>
+                <rect x="48" y="30" width="10" height="4" rx="2"/>
+                <rect x="12" y="12" width="8" height="4" rx="2" transform="rotate(-45 16 14)"/>
+                <rect x="44" y="48" width="8" height="4" rx="2" transform="rotate(-45 48 50)"/>
+                <rect x="12" y="48" width="8" height="4" rx="2" transform="rotate(45 16 50)"/>
+                <rect x="44" y="12" width="8" height="4" rx="2" transform="rotate(45 48 14)"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+        <div>
+          <div class="brand" aria-label="Sistema">Estoque de Autopeças</div>
+          <div class="sub">Processando sua solicitação com segurança</div>
+        </div>
+      </header>
+
+      <div class="loader">
+        <div class="msg" id="loadingMessage">Carregando…</div>
+        <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Progresso">
+          <div class="bar" id="bar"></div>
+        </div>
+        <div class="hint" id="hintText">Isso pode levar alguns segundos.</div>
+
+        <div class="success" id="successState" aria-live="assertive">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <path d="M22 4 12 14.01l-3-3"/>
+          </svg>
+          Concluído! Redirecionando…
+        </div>
+      </div>
+
+      <div class="foot">
+        <span id="contextText">Após login/cadastro, finalizei a validação.</span>
+        <a class="link" href="#" id="cancelLink" onclick="event.preventDefault(); abortLoading();">Cancelar</a>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const bar = document.getElementById('bar');
+    const msg = document.getElementById('loadingMessage');
+    const hint = document.getElementById('hintText');
+    const success = document.getElementById('successState');
+    const progressEl = document.querySelector('.progress');
+    const contextText = document.getElementById('contextText');
+
+    let _timer = null;
+    let _progress = 0;
+    let _aborted = false;
+
+    // Detecta ação da URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const action = urlParams.get('action');
+    const email = urlParams.get('email');
+
+    function setProgress(p){
+      _progress = Math.max(0, Math.min(100, p|0));
+      bar.style.width = _progress + '%';
+      progressEl.setAttribute('aria-valuenow', _progress);
+    }
+    function startLoading(message){
+      _aborted = false;
+      msg.textContent = message || 'Carregando…';
+      success.style.display = 'none';
+      setProgress(0);
+    }
+    function finishLoading(callback){
+      if(_aborted) return;
+      setProgress(100);
+      msg.textContent = 'Pronto!';
+      hint.textContent = 'Operação finalizada com sucesso.';
+      success.style.display = 'flex';
+      document.querySelector('main').setAttribute('aria-busy','false');
+      setTimeout(()=> { if(typeof callback === 'function') callback(); }, 700);
+    }
+    function abortLoading(text){
+      _aborted = true;
+      clearInterval(_timer);
+      msg.textContent = 'Operação cancelada';
+      hint.textContent = text || 'Você pode tentar novamente em instantes.';
+      setProgress(0);
+      success.style.display = 'none';
+    }
+
+    // Inicia loading baseado na ação
+    (function initLoading(){
+      if (action === 'register') {
+        startLoading('Processando cadastro…');
+        contextText.textContent = 'Cadastro realizado! Redirecionando para login.';
+        
+        let step = 0;
+        _timer = setInterval(()=>{
+          if(_aborted) return clearInterval(_timer);
+          step += Math.random()*14 + 6;
+          setProgress(Math.min(92, _progress + step/10));
+          if(_progress >= 92){
+            clearInterval(_timer);
+            setTimeout(()=> finishLoading(()=> {
+              // Redireciona para login após cadastro
+              location.href = 'public/login.html';
+            }), 600);
+          }
+        }, 250);
+      } else if (action === 'login') {
+        startLoading('Validando credenciais…');
+        contextText.textContent = 'Login realizado! Acessando sistema.';
+        
+        let step = 0;
+        _timer = setInterval(()=>{
+          if(_aborted) return clearInterval(_timer);
+          step += Math.random()*14 + 6;
+          setProgress(Math.min(92, _progress + step/10));
+          if(_progress >= 92){
+            clearInterval(_timer);
+            setTimeout(()=> finishLoading(()=> {
+              // Redireciona para o sistema após login
+              location.href = 'public/index.php';
+            }), 600);
+          }
+        }, 250);
+      } else {
+        // Fallback para demo
+        startLoading('Carregando sistema…');
+        contextText.textContent = 'Inicializando aplicação.';
+        
+        let step = 0;
+        _timer = setInterval(()=>{
+          if(_aborted) return clearInterval(_timer);
+          step += Math.random()*14 + 6;
+          setProgress(Math.min(92, _progress + step/10));
+          if(_progress >= 92){
+            clearInterval(_timer);
+            setTimeout(()=> finishLoading(()=> {
+              location.href = 'public/login.html';
+            }), 600);
+          }
+        }, 250);
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -16,13 +16,9 @@ $pdo = db();
 try {
   $pdo->prepare("INSERT INTO users (name,email,password_hash) VALUES (?,?,?)")
       ->execute([$name,$email,$hash]);
-  $uid = (int)$pdo->lastInsertId();
 
-  $_SESSION['user_id'] = $uid;
-  $_SESSION['user_name'] = $name;
-  $_SESSION['user_email'] = $email;
-
-  header('Location: public/index.php');
+  // Redireciona para loading com parâmetro de cadastro
+  header('Location: loanding.html?action=register&email=' . urlencode($email));
 } catch (Throwable $e) {
   http_response_code(400);
   echo 'Erro no cadastro: ' . $e->getMessage();

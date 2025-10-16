@@ -20,4 +20,5 @@ $_SESSION['user_id'] = (int)$user['id'];
 $_SESSION['user_name'] = $user['name'];
 $_SESSION['user_email'] = $user['email'];
 
-header('Location: public/index.php');
+// Redireciona para loading com parâmetro de login
+header('Location: loanding.html?action=login');
